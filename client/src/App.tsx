@@ -10,7 +10,7 @@ export default function App() {
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#18252c]/95 text-white backdrop-blur-xl">
         <div className="container flex h-[76px] items-center justify-between">
           <a href="#top" className="group flex items-center gap-3" aria-label="Reshma Engineering Works home">
-            <span className="grid h-12 w-14 place-items-center overflow-hidden rounded-sm bg-white p-1 shadow-lg shadow-black/20 transition-transform duration-300 group-hover:rotate-2 group-hover:scale-105"><img src="/manus-storage/REWlogo_128ebfe1.jpeg" alt="Reshma Engineering Works logo" className="h-full w-full object-contain" /></span>
+            <span className="grid h-12 w-14 place-items-center overflow-hidden rounded-sm bg-white p-1 shadow-lg shadow-black/20 transition-transform duration-300 group-hover:rotate-2 group-hover:scale-105"><img src="/REWlogo.jpeg" alt="Reshma Engineering Works logo" className="h-full w-full object-contain" /></span>
             <span className="leading-tight"><span className="block font-display text-[15px] font-black italic tracking-[0.2em]">RESHMA</span><span className="block text-[10px] uppercase tracking-[0.28em] text-white/55">ENG WORKS</span></span>
           </a>
           <nav className="hidden items-center gap-8 md:flex">
