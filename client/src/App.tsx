@@ -1,42 +1,30 @@
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./contexts/ThemeContext";
+import { useState } from "react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import Home from "./pages/Home";
 
-
-function Router() {
+export default function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const links = [["Capabilities", "#capabilities"], ["Our work", "#work"], ["About", "#about"], ["Contact", "#contact"]];
   return (
-    <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
+    <div className="min-h-screen bg-[#f4f1eb] text-[#18252c]">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#18252c]/95 text-white backdrop-blur-xl">
+        <div className="container flex h-[76px] items-center justify-between">
+          <a href="#top" className="group flex items-center gap-3" aria-label="Reshma Engineering Works home">
+            <span className="grid h-10 w-10 place-items-center rounded-sm bg-[#d96e3a] font-display text-xl font-black text-[#18252c] transition-transform duration-200 group-hover:rotate-3">R</span>
+            <span className="leading-tight"><span className="block font-display text-[15px] font-bold tracking-[0.18em]">RESHMA</span><span className="block text-[10px] uppercase tracking-[0.28em] text-white/55">Engineering Works</span></span>
+          </a>
+          <nav className="hidden items-center gap-8 md:flex">
+            {links.map(([label, href]) => <a key={href} href={href} className="text-[13px] font-medium text-white/65 transition-colors hover:text-white">{label}</a>)}
+            <a href="#quote" className="inline-flex items-center gap-2 rounded-sm bg-[#d96e3a] px-4 py-3 text-[12px] font-bold uppercase tracking-[0.16em] text-[#18252c] transition-transform duration-200 hover:-translate-y-0.5 active:scale-[0.97]">Request a quote <ArrowUpRight size={15} /></a>
+          </nav>
+          <button className="grid h-10 w-10 place-items-center md:hidden" onClick={() => setMenuOpen((open) => !open)} aria-label={menuOpen ? "Close menu" : "Open menu"}>{menuOpen ? <X /> : <Menu />}</button>
+        </div>
+        {menuOpen && <nav className="border-t border-white/10 bg-[#18252c] px-6 py-5 md:hidden">{links.map(([label, href]) => <a key={href} href={href} onClick={() => setMenuOpen(false)} className="block border-b border-white/10 py-3 text-sm text-white/75">{label}</a>)}<a href="#quote" onClick={() => setMenuOpen(false)} className="mt-4 inline-flex items-center gap-2 rounded-sm bg-[#d96e3a] px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#18252c]">Request a quote <ArrowUpRight size={15} /></a></nav>}
+      </header>
+      <Home />
+      <a href="#quote" className="fixed bottom-4 left-4 right-4 z-40 flex items-center justify-center gap-2 rounded-sm bg-[#d96e3a] px-5 py-4 text-xs font-bold uppercase tracking-[0.18em] text-[#18252c] shadow-2xl shadow-[#18252c]/20 md:hidden">Start your enquiry <ArrowUpRight size={16} /></a>
+    </div>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
-function App() {
-  return (
-    <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
-  );
-}
-
-export default App;
+export { };
