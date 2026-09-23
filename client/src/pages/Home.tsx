@@ -1,7 +1,5 @@
 import { FormEvent, useState } from "react";
 
-const SUPABASE_URL = "https://jgyapkhqipqulzrtzaxy.supabase.co";
-const SUPABASE_KEY = "sb_publishable_VrujpGnm9s_of9lQUNiX8w_VRgfYeY6";
 import { ArrowRight, Check, ChevronRight, Clock3, Factory, FileUp, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Star, UploadCloud } from "lucide-react";
 
 const services = [
@@ -37,16 +35,14 @@ export default function Home() {
     setPending(true); setError("");
     try {
       const enquiryNumber = `REW-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-      const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json", Prefer: "return=representation" };
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/enquiries`, { method: "POST", headers, body: JSON.stringify({ enquiry_number: enquiryNumber, customer_name: data.get("customer_name"), company: data.get("company") || null, phone: data.get("phone"), email: data.get("email"), requirement: data.get("message"), service: data.get("service"), material: null, quantity: data.get("quantity") || null, delivery_date: data.get("delivery_date") || null, message: data.get("message"), preferred_contact: "phone", consent: data.get("consent") === "true" }) });
-      if (!response.ok) throw new Error("enquiry");
-      const [row] = await response.json();
+      let attachmentBase64 = "";
       if (file instanceof File && file.name) {
-        const safeName = `${row.id}/${file.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
-        const upload = await fetch(`${SUPABASE_URL}/storage/v1/object/rew-private-attachments/${safeName}`, { method: "POST", headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": file.type || "application/octet-stream" }, body: file });
-        if (upload.ok) await fetch(`${SUPABASE_URL}/rest/v1/attachments`, { method: "POST", headers, body: JSON.stringify({ enquiry_id: row.id, original_name: file.name, stored_name: safeName, file_type: file.type || "application/octet-stream", file_size: file.size, storage_path: safeName }) });
+        attachmentBase64 = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = reject; reader.readAsDataURL(file); });
       }
-      setReference(row.enquiry_number || enquiryNumber); setSubmitted(true); form.reset(); setFileName("");
+      const response = await fetch("/api/submit-enquiry", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ customer_name: data.get("customer_name"), company: data.get("company") || null, phone: data.get("phone"), email: data.get("email"), requirement: data.get("message"), service: data.get("service"), quantity: data.get("quantity") || null, delivery_date: data.get("delivery_date") || null, message: data.get("message"), consent: data.get("consent") === "true", attachment_base64: attachmentBase64, attachment_name: file instanceof File ? file.name : "", attachment_type: file instanceof File ? file.type : "", attachment_size: file instanceof File ? file.size : 0 }) });
+      if (!response.ok) throw new Error("enquiry");
+      const result = await response.json();
+      setReference(result.enquiry_number); setSubmitted(true); form.reset(); setFileName("");
     } catch { setError("We couldn’t submit the requirement just now. Please call us directly and we’ll help immediately."); } finally { setPending(false); }
   };
   return (
